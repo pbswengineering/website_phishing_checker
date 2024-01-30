@@ -24,11 +24,11 @@ Website Phishing Checker is a Python command line application that reads an URL 
 
 Firstly you need to install all required libraries, possibly in a Virtual Environment:
 
-  pip install -r requirements.txt
+    pip install -r requirements.txt
 
 Finally you can just run the checker like this:
 
-  python check.py
+    python check.py
 
 ## License
 

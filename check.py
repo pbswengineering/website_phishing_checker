@@ -218,6 +218,13 @@ def check_rightclick(html):
         return -1
 
 
+def check_popup(html):
+    if 'window.open(' in html:
+        return 1
+    else:
+        return -1
+
+
 def check_domain_age(domain):
     now = datetime.now()
     w = whois.whois(domain)
@@ -324,7 +331,7 @@ def get_url_features(url):
     f['URL of Anchor'] = check_url_anchors(soup, parsed_url.netloc)
     f['Links in Tags'] = check_link_in_tags(soup, parsed_url.netloc)
     f['SFH'] = check_form_handlers(soup, parsed_url.netloc)
-    f['PopUp Window'] = check_form_handlers(soup, parsed_url.netloc)
+    f['PopUp Window'] = check_popup(html)
     f['IFrame'] = check_iframe(soup)
     f['Submitting to Email'] = check_submit_email(soup)
     print(colored('[ 30%]', 'magenta'), 'WHOIS...')
@@ -368,7 +375,6 @@ def print_features(features):
 
 
 if __name__ == '__main__':
-    # See https://openphish.com/ for live phishing examples
     #website = 'http://ploshadka.top/irsus/payment.html'
     print()
     cprint(' --- PHISHING WEBSITE CHECKER --- ', 'white', 'on_cyan')

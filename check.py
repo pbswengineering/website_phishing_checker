@@ -39,7 +39,6 @@ def verify_ssl_certificate(hostname):
 def days_to_domain_expire(domain):
     now = datetime.now()
     w = whois.whois(domain)
-
     if type(w.expiration_date) == list:
         w.expiration_date = w.expiration_date[0]
     else:
@@ -309,7 +308,10 @@ def get_url_features(url):
     print(colored('[ 10%]', 'magenta'), 'SSL certificate...')
     f['SSL Final State'] = verify_ssl_certificate(host)
     print(colored('[ 20%]', 'magenta'), 'Expiry date...')
-    f['Domain Registration Length'] = days_to_domain_expire(host) < 365 and 1 or -1
+    try:
+        f['Domain Registration Length'] = days_to_domain_expire(host) < 365 and 1 or -1
+    except:
+        f['Domain Registration Length'] = 1
     f['Port'] = check_port(parsed_url)
     f['HTTPS Token'] = 'https' in host and 1 or -1
     ctx = ssl.create_default_context()
@@ -331,7 +333,10 @@ def get_url_features(url):
     f['On Mouseover'] = check_onmouseover(html)
     f['Right Click'] = check_rightclick(html)
     print(colored('[ 45%]', 'magenta'), 'Domain registration age...')
-    f['Age of Domain'] = check_domain_age(host)
+    try:
+        f['Age of Domain'] = check_domain_age(host)
+    except:
+        f['Age of Domain'] = 1
     f['DNS Record'] = check_dnsrecord(host)
     print(colored('[ 60%]', 'magenta'), 'Website traffic...')
     f['Web Traffic'] = check_traffic(host)
@@ -353,7 +358,6 @@ def get_url_features(url):
         f['Links Pointing to Page'] = 0  # No information = cannot draw conclusions...
     print(colored('[ 90%]', 'magenta'), 'Statistical report...')
     f['Statistical Report'] = check_statistical_report(host)
-    print("\n".join(f.keys()))
     print(colored('[100%]', 'magenta'), 'Done.')
     return f
 
@@ -375,8 +379,8 @@ if __name__ == '__main__':
     f = get_url_features(website)
     print()
     print_features(f)
-    fselect = joblib.load('fselect.joblib')
-    clf = joblib.load('rf.joblib')
+    fselect = joblib.load('production_fselect.joblib')
+    clf = joblib.load('production_cls.joblib')
     print(colored('\nLoading classifier...', 'cyan'))
     X = [[float(v) for v in f.values()]]
     X_new = fselect.transform(X)
